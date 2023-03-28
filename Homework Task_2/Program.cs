@@ -1,34 +1,22 @@
 ﻿using System;
 
-namespace CompareNumbers
+class Program
 {
-    class Program
+    static void Main(string[] args)
     {
-        static void Main(string[] args)
-        {
-            Console.WriteLine("Введите первое число:");
-            int num1 = int.Parse(Console.ReadLine());
+        Console.WriteLine("Введите три числа:");
 
-            Console.WriteLine("Введите второе число:");
-            int num2 = int.Parse(Console.ReadLine());
+        int a = int.Parse(Console.ReadLine());
+        int b = int.Parse(Console.ReadLine());
+        int c = int.Parse(Console.ReadLine());
 
-            if (num1 > num2)
-            {
-                Console.WriteLine($"{num1} Больше,чем {num2}");
-            }
-            else if (num1 < num2)
-            {
-                Console.WriteLine($"{num1} Меньше,чем {num2}");
-            }
-            else
-            {
-                Console.WriteLine($"{num1} и {num2} равны");
-            }
+        int max = a;
 
-            Console.ReadLine();
-        }
+        if (b > max) max = b;
+        if (c > max) max = c;
+
+        Console.WriteLine("Максимальное число: " + max);
+
+        Console.ReadLine();
     }
 }
-
-
-
