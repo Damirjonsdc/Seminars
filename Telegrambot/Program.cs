@@ -1,27 +1,4 @@
-﻿/*
- // dotnet add package Telegram.Bot
-using Telegram.Bot;
-using Telegram.Bot.Types;
-using Telegram.Bot.Types.InputFiles;
-
-TelegramBotClient client = new TelegramBotClient("6206490608:AAFlh9T-nIK3yRY1LYw6Cy-GFm4xjWBKmTY");
-
-User user = await client.GetMeAsync();
-
-Console.WriteLine(user.Username);
-
-Console.WriteLine(user.Username);
-
-while (true)
-{
-    Update[] updates = await client.GetUpdatesAsync();
-
-    for (var i = 0; i < updates.Length; i++)
-    {
-        Console.WriteLine(updates[i].Message.Text);
-    }
-*/
-// выполняем команду в консоли чтобы подключить пакет для взаимодействия с ботом в телеграм
+﻿// выполняем команду в консоли чтобы подключить пакет для взаимодействия с ботом в телеграм
 // dotnet add package Telegram.bot
 
 // В телеграм ищем @BotFather, вводим /newbot в сообщения
@@ -36,7 +13,7 @@ using Telegram.Bot.Types;
 using Telegram.Bot.Types.InputFiles;
 
 // создаем объект бота и вводим ввиде параметра полученный выше тикет
-TelegramBotClient client = new TelegramBotClient("6206490608:AAFlh9T-nIK3yRY1LYw6Cy-GFm4xjWBKmTY");
+TelegramBotClient client = new TelegramBotClient("5620437115:AAEcuPxNHSbWV_vEbgJVeGhdoGy1YLHiTSQ");
 
 User user = await client.GetMeAsync(); // получаем имя бота
 
