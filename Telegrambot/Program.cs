@@ -1,56 +1,88 @@
-﻿using System;
-using System.Threading;
-using System.Threading.Tasks;
+﻿// dotnet add package Telegram.Bot
 using Telegram.Bot;
 using Telegram.Bot.Types;
-using Telegram.Bot.Exceptions;
 
-namespace TelegramBotExperiments
+TelegramBotClient client = new TelegramBotClient("6075118055:AAGgpIiOE0iCWDxKYawzMxHjWVBiHPyEoOg");
+
+List<long> users = new List<long>();
+long adminId = 0;
+
+DateTime dateAlert = DateTime.Now;
+
+User user = await client.GetMeAsync();
+
+Console.WriteLine(user.Username);
+
+while (true)
 {
+    Update[] updates = await client.GetUpdatesAsync();
 
-    class Program
+    for (var i = 0; i < updates.Length; i++)
     {
-        static ITelegramBotClient bot = new TelegramBotClient("6075118055:AAGgpIiOE0iCWDxKYawzMxHjWVBiHPyEoOg");
-        public static async Task HandleUpdateAsync(ITelegramBotClient botClient, Update update, CancellationToken cancellationToken)
+        SendGoose(updates[i]);
+        if (updates[i].Message.Text == "123")
         {
-            // Некоторые действия
-            Console.WriteLine(Newtonsoft.Json.JsonConvert.SerializeObject(update));
-            if(update.Type == Telegram.Bot.Types.Enums.UpdateType.Message)
+            adminId = updates[i].Message.From.Id;
+        }
+
+        if (DateTime.TryParse(updates[i].Message.Text, out DateTime date))
+        {
+            Console.WriteLine(date);
+            dateAlert = date;
+            SendAlert();
+        }
+
+        if (!users.Contains(updates[i].Message.From.Id) && updates[i].Message.From.Id != adminId)
+        {
+            Console.WriteLine(updates[i].Message.From.Id);
+            users.Add(updates[i].Message.From.Id);
+        }
+
+        if (adminId == updates[i].Message.From.Id)
+        {
+            SendMessageToAllUsers(updates[i].Message.Text);
+        }
+    }
+
+    if (updates.Length != 0)
+    {
+        updates = await client.GetUpdatesAsync(updates[updates.Length - 1].Id + 1);
+    }
+}
+
+void SendGoose(Update update)
+{
+    if (update.Message.Text.ToLower() == "хочу гуся")
+    {
+        StreamReader reader = new StreamReader("Images/123.jpg");// укажите путь до файла
+        client.SendPhotoAsync(update.Message.From.Id, reader.BaseStream);
+    }
+}
+
+void SendAlert()
+{
+    Task.Run(() =>
+    {
+        while (true)
+        {
+            if (DateTime.Now.AddMinutes(15) == dateAlert)
             {
-                var message = update.Message;
-                if (message.Text.ToLower() == "/start")
-                {
-                    await botClient.SendTextMessageAsync(message.Chat, "Добро пожаловать на борт, добрый путник!");
-                    return;
-                }
-                await botClient.SendTextMessageAsync(message.Chat, "Привет-привет!!");
+                SendMessageToAllUsers($"Занятие начнется через {15} минут");
+            }
+
+            if (DateTime.Now == dateAlert)
+            {
+                SendMessageToAllUsers($"Занятие началось, присоединяйтесь.");
+                return;
             }
         }
+    });
+}
 
-        public static async Task HandleErrorAsync(ITelegramBotClient botClient, Exception exception, CancellationToken cancellationToken)
-        {
-            // Некоторые действия
-            Console.WriteLine(Newtonsoft.Json.JsonConvert.SerializeObject(exception));
-        }
-
-
-        static void Main(string[] args)
-        {
-            Console.WriteLine("Запущен бот " + bot.GetMeAsync().Result.FirstName);
-
-            var cts = new CancellationTokenSource();
-            var cancellationToken = cts.Token;
-            var receiverOptions = new ReceiverOptions
-            {
-                AllowedUpdates = { }, // receive all update types
-            };
-            bot.StartReceiving(
-                HandleUpdateAsync,
-                HandleErrorAsync,
-                receiverOptions,
-                cancellationToken
-            );
-            Console.ReadLine();
-        }
+void SendMessageToAllUsers(string text)
+{
+    for (int i = 0; i < users.Count; i++)
+    {
+        client.SendTextMessageAsync(new ChatId(users[i]), text);
     }
 }
